@@ -7,7 +7,10 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 // Connect to MongoDB
+const mongoose = require('mongoose');
+mongoose.set('bufferCommands', true); // Ensure buffering is ON for serverless cold starts
 const connectDB = require('./config/db');
+
 
 // Ensure DB connection before every request (required for serverless)
 async function dbMiddleware(req, res, next) {
