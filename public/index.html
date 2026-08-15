@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact Manager - Smart Contact Management</title>
+  <meta name="description" content="Secure, modern full-stack contact management application with real-time search, categorization, and authentication." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <!-- Global Toast Notifications Container -->
+  <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+  <!-- Header Navigation -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand-logo">
+        <div class="logo-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+          </svg>
+        </div>
+        <div class="logo-text">
+          <span class="logo-title">Contact <strong>Manager</strong></span>
+        </div>
+      </div>
+
+      <!-- Auth User Status (Visible when logged in) -->
+      <div id="user-nav-section" class="user-nav hidden">
+        <div class="user-profile-badge">
+          <div id="user-avatar-initials" class="user-avatar">U</div>
+          <div class="user-info">
+            <span id="user-display-name" class="user-name">User Name</span>
+            <span id="user-display-email" class="user-email">user@example.com</span>
+          </div>
+        </div>
+        <button id="logout-btn" class="btn-secondary btn-sm" title="Log out of your account">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+          </svg>
+          <span>Sign Out</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="main-wrapper">
+
+    <!-- ==================== AUTH VIEW ==================== -->
+    <section id="auth-view" class="auth-section">
+      <div class="auth-card">
+        <div class="auth-header">
+          <div class="auth-badge">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+            <span>Secure Access</span>
+          </div>
+          <h1 id="auth-heading" class="auth-title">Welcome to Contact Manager</h1>
+          <p id="auth-subheading" class="auth-desc">Manage all your personal & professional connections in one secure place.</p>
+        </div>
+
+        <!-- Auth Tabs Switcher -->
+        <div class="auth-tabs" role="tablist">
+          <button id="tab-login" class="tab-btn active" role="tab" aria-selected="true">Sign In</button>
+          <button id="tab-register" class="tab-btn" role="tab" aria-selected="false">Create Account</button>
+        </div>
+
+        <!-- Form Alert Message -->
+        <div id="auth-alert" class="alert hidden" role="alert"></div>
+
+        <!-- Login Form -->
+        <form id="login-form" class="auth-form" autocomplete="on">
+          <div class="form-group">
+            <label for="login-email">Email Address</label>
+            <div class="input-wrapper">
+              <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                <polyline points="22,6 12,13 2,6"></polyline>
+              </svg>
+              <input type="email" id="login-email" name="email" placeholder="alex.smith@example.com" required autocomplete="email" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="label-row">
+              <label for="login-password">Password</label>
+            </div>
+            <div class="input-wrapper">
+              <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+              </svg>
+              <input type="password" id="login-password" name="password" placeholder="Enter your password" required autocomplete="current-password" />
+              <button type="button" class="btn-toggle-pwd" data-target="login-password" title="Show/Hide password">
+                <svg class="eye-open" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                <svg class="eye-closed hidden" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+              </button>
+            </div>
+          </div>
+
+          <button type="submit" id="login-submit-btn" class="btn-primary btn-block">
+            <span class="btn-text">Sign In</span>
+            <span class="btn-spinner hidden"></span>
+          </button>
+        </form>
+
+        <!-- Register Form -->
+        <form id="register-form" class="auth-form hidden" autocomplete="on">
+          <div class="form-group">
+            <label for="register-name">Full Name</label>
+            <div class="input-wrapper">
+              <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+              <input type="text" id="register-name" name="name" placeholder="John Doe" required autocomplete="name" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="register-email">Email Address</label>
+            <div class="input-wrapper">
+              <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                <polyline points="22,6 12,13 2,6"></polyline>
+              </svg>
+              <input type="email" id="register-email" name="email" placeholder="john.doe@example.com" required autocomplete="email" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="register-password">Create Password (min. 6 characters)</label>
+            <div class="input-wrapper">
+              <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+              </svg>
+              <input type="password" id="register-password" name="password" placeholder="At least 6 characters" minlength="6" required autocomplete="new-password" />
+              <button type="button" class="btn-toggle-pwd" data-target="register-password" title="Show/Hide password">
+                <svg class="eye-open" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                <svg class="eye-closed hidden" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+              </button>
+            </div>
+          </div>
+
+          <button type="submit" id="register-submit-btn" class="btn-primary btn-block">
+            <span class="btn-text">Create Account</span>
+            <span class="btn-spinner hidden"></span>
+          </button>
+        </form>
+
+        <div class="auth-footer">
+          <p id="prompt-to-register">Don't have an account? <a href="#" id="switch-to-register-link">Sign up now</a></p>
+          <p id="prompt-to-login" class="hidden">Already have an account? <a href="#" id="switch-to-login-link">Sign in</a></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== DASHBOARD VIEW ==================== -->
+    <section id="dashboard-view" class="dashboard-section hidden">
+      
+      <!-- Top Metrics Overview Bar -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon stat-blue">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+            </svg>
+          </div>
+          <div class="stat-details">
+            <span class="stat-label">Total Contacts</span>
+            <h3 id="stat-total-count" class="stat-value">0</h3>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon stat-amber">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.5">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+            </svg>
+          </div>
+          <div class="stat-details">
+            <span class="stat-label">Favorites</span>
+            <h3 id="stat-favorite-count" class="stat-value">0</h3>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon stat-teal">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+              <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+            </svg>
+          </div>
+          <div class="stat-details">
+            <span class="stat-label">Work & Clients</span>
+            <h3 id="stat-work-count" class="stat-value">0</h3>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon stat-purple">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+            </svg>
+          </div>
+          <div class="stat-details">
+            <span class="stat-label">Personal & Family</span>
+            <h3 id="stat-personal-count" class="stat-value">0</h3>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Toolbar -->
+      <div class="dashboard-toolbar">
+        <div class="search-sort-box">
+          <!-- Search Input -->
+          <div class="search-input-wrapper">
+            <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input type="text" id="search-input" placeholder="Search by name, email, phone, company..." />
+            <button id="search-clear-btn" class="btn-clear hidden" title="Clear search">×</button>
+          </div>
+
+          <!-- Sort Select -->
+          <div class="sort-select-wrapper">
+            <select id="sort-select" title="Sort contacts">
+              <option value="recent">Newest First</option>
+              <option value="name_asc">Name (A → Z)</option>
+              <option value="name_desc">Name (Z → A)</option>
+              <option value="oldest">Oldest First</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Add Contact CTA -->
+        <button id="open-add-modal-btn" class="btn-primary">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          <span>Add Contact</span>
+        </button>
+      </div>
+
+      <!-- Filter Category Chips -->
+      <div class="category-filters" role="tablist">
+        <button class="filter-chip active" data-category="All">All Contacts</button>
+        <button class="filter-chip" data-favorite="true">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+          </svg>
+          Favorites
+        </button>
+        <button class="filter-chip" data-category="Personal">Personal</button>
+        <button class="filter-chip" data-category="Work">Work</button>
+        <button class="filter-chip" data-category="Family">Family</button>
+        <button class="filter-chip" data-category="Client">Client</button>
+        <button class="filter-chip" data-category="Other">Other</button>
+      </div>
+
+      <!-- Contacts List Header -->
+      <div class="contacts-header-bar">
+        <div class="results-info">
+          <span id="results-count-text">Loading contacts...</span>
+        </div>
+      </div>
+
+      <!-- Contacts Grid Container -->
+      <div id="contacts-container" class="contacts-grid">
+        <!-- Dynamically rendered via app.js -->
+      </div>
+
+      <!-- Empty State View -->
+      <div id="empty-state" class="empty-state hidden">
+        <div class="empty-icon-circle">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+            <line x1="19" y1="8" x2="19" y2="14"></line>
+            <line x1="22" y1="11" x2="16" y2="11"></line>
+          </svg>
+        </div>
+        <h3 id="empty-title">No contacts found</h3>
+        <p id="empty-subtitle">Get started by creating your first contact to keep all your connections organized.</p>
+        <button id="empty-add-btn" class="btn-primary btn-sm">Add New Contact</button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==================== ADD / EDIT CONTACT MODAL ==================== -->
+  <div id="contact-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2 id="modal-title" class="modal-heading">Add New Contact</h2>
+        <button class="modal-close-btn" id="close-contact-modal-btn" title="Close modal">&times;</button>
+      </div>
+
+      <form id="contact-form" class="modal-body-form">
+        <input type="hidden" id="contact-id" name="id" />
+
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label for="contact-name">Full Name <span class="required-star">*</span></label>
+            <input type="text" id="contact-name" name="name" placeholder="e.g. Sarah Jenkins" required />
+          </div>
+          <div class="form-group flex-1">
+            <label for="contact-category">Category</label>
+            <select id="contact-category" name="category">
+              <option value="Personal">Personal</option>
+              <option value="Work">Work</option>
+              <option value="Family">Family</option>
+              <option value="Client">Client</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label for="contact-phone">Phone Number <span class="required-star">*</span></label>
+            <input type="tel" id="contact-phone" name="phone" placeholder="+1 (555) 234-5678" required />
+          </div>
+          <div class="form-group flex-1">
+            <label for="contact-email">Email Address</label>
+            <input type="email" id="contact-email" name="email" placeholder="sarah@example.com" />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label for="contact-company">Company / Organization</label>
+            <input type="text" id="contact-company" name="company" placeholder="e.g. Acme Corp" />
+          </div>
+          <div class="form-group flex-1">
+            <label for="contact-address">Address / Location</label>
+            <input type="text" id="contact-address" name="address" placeholder="San Francisco, CA" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="contact-notes">Notes / Details</label>
+          <textarea id="contact-notes" name="notes" rows="3" placeholder="Add additional details, meeting notes, or relationship context..."></textarea>
+        </div>
+
+        <div class="form-options-row">
+          <label class="checkbox-label" for="contact-favorite">
+            <input type="checkbox" id="contact-favorite" name="isFavorite" />
+            <span class="custom-checkbox"></span>
+            <span>Mark as Favorite Contact</span>
+          </label>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" id="cancel-contact-btn" class="btn-secondary">Cancel</button>
+          <button type="submit" id="save-contact-btn" class="btn-primary">
+            <span class="btn-text">Save Contact</span>
+            <span class="btn-spinner hidden"></span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== DELETE CONFIRMATION MODAL ==================== -->
+  <div id="delete-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="delete-modal-title">
+    <div class="modal-card modal-card-sm">
+      <div class="delete-icon-wrapper">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 6h18"></path>
+          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+          <line x1="10" y1="11" x2="10" y2="17"></line>
+          <line x1="14" y1="11" x2="14" y2="17"></line>
+        </svg>
+      </div>
+      <h3 id="delete-modal-title" class="delete-heading">Delete Contact?</h3>
+      <p class="delete-subtext">Are you sure you want to delete <strong id="delete-contact-name">this contact</strong>? This action cannot be undone.</p>
+      
+      <div class="modal-actions">
+        <button type="button" id="cancel-delete-btn" class="btn-secondary">Cancel</button>
+        <button type="button" id="confirm-delete-btn" class="btn-danger">
+          <span class="btn-text">Delete Contact</span>
+          <span class="btn-spinner hidden"></span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/api.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
