@@ -8,7 +8,17 @@ dotenv.config();
 
 // Connect to MongoDB
 const connectDB = require('./config/db');
-connectDB();
+
+// Ensure DB connection before every request (required for serverless)
+async function dbMiddleware(req, res, next) {
+  try {
+    await connectDB();
+    next();
+  } catch (err) {
+    console.error('DB connection failed:', err.message);
+    res.status(500).json({ success: false, message: 'Database connection failed. Please try again.' });
+  }
+}
 
 const app = express();
 
@@ -20,7 +30,8 @@ app.use(express.urlencoded({ extended: true }));
 // Serve static frontend files
 app.use(express.static(path.join(__dirname, 'public')));
 
-// API Routes
+// API Routes — connect DB before every API call
+app.use('/api', dbMiddleware);
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/contacts', require('./routes/contactRoutes'));
 
