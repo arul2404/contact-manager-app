@@ -7,7 +7,8 @@ if (!cached) {
 }
 
 const connectDB = async () => {
-  if (cached.conn) {
+  // Return cached connection if available
+  if (cached.conn && mongoose.connection.readyState === 1) {
     return cached.conn;
   }
 
@@ -15,27 +16,29 @@ const connectDB = async () => {
     throw new Error('MONGO_URI environment variable is not set');
   }
 
+  // If no pending promise, create one
   if (!cached.promise) {
     const opts = {
-      serverSelectionTimeoutMS: 10000,
+      serverSelectionTimeoutMS: 15000,
       socketTimeoutMS: 45000,
-      bufferCommands: false,
+      connectTimeoutMS: 15000,
+      maxPoolSize: 10,
     };
 
     console.log(`📡 Connecting to MongoDB Atlas...`);
-    cached.promise = mongoose.connect(process.env.MONGO_URI, opts).then((mongoose) => {
-      console.log(`✅ MongoDB Connected: ${mongoose.connection.host}`);
-      return mongoose;
-    });
+    cached.promise = mongoose
+      .connect(process.env.MONGO_URI, opts)
+      .then((m) => {
+        console.log(`✅ MongoDB Connected: ${m.connection.host}`);
+        return m;
+      })
+      .catch((err) => {
+        cached.promise = null; // Reset so next request retries
+        throw err;
+      });
   }
 
-  try {
-    cached.conn = await cached.promise;
-  } catch (e) {
-    cached.promise = null;
-    throw e;
-  }
-
+  cached.conn = await cached.promise;
   return cached.conn;
 };
 
