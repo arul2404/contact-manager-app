@@ -7,10 +7,7 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 // Connect to MongoDB
-const mongoose = require('mongoose');
-mongoose.set('bufferCommands', true); // Ensure buffering is ON for serverless cold starts
 const connectDB = require('./config/db');
-
 
 // Ensure DB connection before every request (required for serverless)
 async function dbMiddleware(req, res, next) {
@@ -18,8 +15,11 @@ async function dbMiddleware(req, res, next) {
     await connectDB();
     next();
   } catch (err) {
-    console.error('DB connection failed:', err.message);
-    res.status(500).json({ success: false, message: 'Database connection failed. Please try again.' });
+    console.error('DB connection error:', err.message);
+    res.status(500).json({
+      success: false,
+      message: err.message || 'Database connection failed. Please try again.',
+    });
   }
 }
 
@@ -52,7 +52,11 @@ app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
-  console.log(`🚀 Contact Management Server running on port ${PORT}`);
-  console.log(`👉 Open http://localhost:${PORT} in your browser`);
-});
+if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`🚀 Contact Management Server running on port ${PORT}`);
+    console.log(`👉 Open http://localhost:${PORT} in your browser`);
+  });
+}
+
+module.exports = app;
